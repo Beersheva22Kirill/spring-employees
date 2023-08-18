@@ -90,12 +90,13 @@ public class EmployeesServiceRest implements EmployeesService {
 
 	@Override
 	public Employee updateEmployee(Integer id, Employee employee) {
-		Employee updated = map.get(employee);
+		Employee updated = map.get(id);
 		if (updated != null) {
+			employee.setId(updated.getId());
 			map.remove(id);
 			addEmployee(employee);
 		}
-		return null;
+		return employee;
 	}
 
 	@Override

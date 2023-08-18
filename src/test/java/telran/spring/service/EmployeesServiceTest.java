@@ -65,5 +65,16 @@ class EmployeesServiceTest {
 		assertTrue(actual.equals(expected));
 		assertEquals(2, service.getAllEmployees().size());
 	}
+	
+	@Test
+	@Order(3)
+	void updateEmployeetest() {
+		Employee expected = new Employee("test_name1", "male", "04.04.1989", "test_dep2", 20000d);
+		expected.setId(1);
+		Employee actual = service.updateEmployee(1, expected);
+		assertTrue(actual.equals(expected));
+	}
+	
+	
 
 }

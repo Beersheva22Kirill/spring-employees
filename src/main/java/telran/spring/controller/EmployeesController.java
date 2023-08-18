@@ -35,7 +35,7 @@ public class EmployeesController implements EmployeesService{
 		return service.addEmployee(employee);
 	}
 
-	@DeleteMapping({"id"})
+	@DeleteMapping("{id}")
 	public Employee deleteEmployee(@PathVariable Integer id) {
 		log.trace("Controller recieved for remove id: {}", id);
 		return service.deleteEmployee(id);
