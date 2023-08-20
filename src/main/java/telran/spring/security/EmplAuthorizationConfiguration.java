@@ -13,6 +13,7 @@ public class EmplAuthorizationConfiguration implements AuthorizationConfiguratio
 
 	public void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.OPTIONS).permitAll().
+				requestMatchers("/websocket/employees/**").permitAll().
 				requestMatchers(HttpMethod.GET).authenticated()
 				.anyRequest().hasRole("ADMIN"));
 		log.info("Employees authorization configuration loaded");

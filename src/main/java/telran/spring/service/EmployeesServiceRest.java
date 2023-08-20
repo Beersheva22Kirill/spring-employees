@@ -13,14 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import telran.spring.exceptions.NotFoundException;
 import telran.spring.model.Employee;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class EmployeesServiceRest implements EmployeesService {
 	
 	Map<Integer,Employee> map = new HashMap();
@@ -28,12 +31,14 @@ public class EmployeesServiceRest implements EmployeesService {
 	String fileName;
 	Integer MIN_ID = 100000;
 	Integer MAX_ID = 1000000;
+	final SimpMessagingTemplate notifier;
 	
 	@Override
 	public Integer addEmployee(Employee employee) {
 		Integer id = employee.getId() != null ? employee.getId() : getRandomId();
 		employee.setId(id);
 		map.putIfAbsent(id, employee);
+		notifier.convertAndSend("/topic/employees", "added");
 		log.trace("Employee added. id of employee: {}", id);
 		return id;
 	}
@@ -68,6 +73,7 @@ public class EmployeesServiceRest implements EmployeesService {
 			throw new NotFoundException("Employee with id: " + id + "not found");
 			
 		}
+		notifier.convertAndSend("/topic/employees", "deleted");
 		return removed;
 	}
 
@@ -96,6 +102,7 @@ public class EmployeesServiceRest implements EmployeesService {
 			map.remove(id);
 			addEmployee(employee);
 		}
+		notifier.convertAndSend("/topic/employees", "updated");
 		return employee;
 	}
 
