@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import telran.spring.exceptions.NotFoundException;
 import telran.spring.model.Employee;
+import telran.spring.model.PushMessage;
 
 @Service
 @Slf4j
@@ -38,7 +39,7 @@ public class EmployeesServiceRest implements EmployeesService {
 		Integer id = employee.getId() != null ? employee.getId() : getRandomId();
 		employee.setId(id);
 		map.putIfAbsent(id, employee);
-		notifier.convertAndSend("/topic/employees", "added");
+		notifier.convertAndSend("/topic/employees", new PushMessage("added", employee));
 		log.trace("Employee added. id of employee: {}", id);
 		return id;
 	}
@@ -70,10 +71,10 @@ public class EmployeesServiceRest implements EmployeesService {
 			log.trace("Employee with id - {} removed",id);
 		}else {
 			log.error("Employee with id: {} not found", id);
-			throw new NotFoundException("Employee with id: " + id + "not found");
+			throw new NotFoundException("Employee with id: " + id + " not found");
 			
 		}
-		notifier.convertAndSend("/topic/employees", "deleted");
+		notifier.convertAndSend("/topic/employees", new PushMessage("deleted", removed));
 		return removed;
 	}
 
@@ -102,7 +103,7 @@ public class EmployeesServiceRest implements EmployeesService {
 			map.remove(id);
 			addEmployee(employee);
 		}
-		notifier.convertAndSend("/topic/employees", "updated");
+		notifier.convertAndSend("/topic/employees", new PushMessage("updated", employee));
 		return employee;
 	}
 
